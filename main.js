@@ -1,46 +1,116 @@
+axios.default.headers.common['X-Auth-Token']=
+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+
 // GET REQUEST
 function getTodos() {
-  console.log('GET Request');
+ axios.get('https://jsonplaceholder.typeicode.com/todos').then((res)=>{
+  console.log(res);
+ }).catch((err)=>{
+  console.log(err);
+ })
 }
 
 // POST REQUEST
 function addTodo() {
-  console.log('POST Request');
+  axios.post('https://jsonplaceholder.typeicode.com/todos',{title:'new Todo',completed:false}).then((res)=>{
+  console.log(res);
+ }).catch((err)=>{
+  console.log(err);
+ })
 }
 
 // PUT/PATCH REQUEST
 function updateTodo() {
-  console.log('PUT/PATCH Request');
+  axios.patch('https://jsonplaceholder.typeicode.com/todos/1',{title:'Updated Todo',completed:false}).then((res)=>{
+  console.log(res);
+ }).catch((err)=>{
+  console.log(err);
+ })
 }
 
 // DELETE REQUEST
 function removeTodo() {
-  console.log('DELETE Request');
+  axios.delete('https://jsonplaceholder.typeicode.com/todos/1').then((res)=>{
+  console.log(res);
+ }).catch((err)=>{
+  console.log(err);
+ })
 }
 
 // SIMULTANEOUS DATA
 function getData() {
-  console.log('Simultaneous Request');
+  axios.all([
+    axios.get('https://jsonplaceholder.typeicode.com/todos'),
+    axios.get('https://jsonplaceholder.typeicode.com/posts'),
+  ]).then((res)=>{
+    console.log(res[0]);
+    console.log(res[1]);
+   }).catch((err)=>{
+    console.log(err);
+   })
 }
 
 // CUSTOM HEADERS
 function customHeaders() {
-  console.log('Custom Headers');
+  const config={
+    headers:{
+    'Content-Type':'application/json',
+    Authorization:'sometoken'
+    }
+  }
+  axios.post('https://jsonplaceholder.typeicode.com/todos',{title:'new Todo',completed:false},config).then((res)=>{
+    console.log(res);
+   }).catch((err)=>{
+    console.log(err);
+   })
 }
 
 // TRANSFORMING REQUESTS & RESPONSES
 function transformResponse() {
-  console.log('Transform Response');
+ const options={
+  method:'post',
+  url:"https://jsonplaceholder.typeicode.com/todos",
+  data:{
+    title:'helo world'
+  },
+  transformResponse:axios.defaults.transformResponse.concat(data=>{
+    data.title=data.title.toUpperCase();
+    return data;
+  })
+ }
+ axios(options).then(res=>showOutput(res))
 }
 
 // ERROR HANDLING
 function errorHandling() {
-  console.log('Error Handling');
+  axios.get('https://jsonplaceholder.typeicode.com/todos').then((res)=>{
+    console.log(res);
+   }).catch((err)=>{
+   if(err.response){
+      console.log(err.response.data);
+      console.log(err.response.status);
+      console.log(err.response.headers);
+   }
+   })
 }
 
 // CANCEL TOKEN
 function cancelToken() {
-  console.log('Cancel Token');
+  const source = axios.CancelToken.source;
+  axios.get('https://jsonplaceholder.typeicode.com/todos',{
+    cancelToken:source.token
+  }).then((res)=>{
+    console.log(res);
+   }).catch((err)=>{
+    if(err.response){
+       console.log(err.response.data);
+       console.log(err.response.status);
+       console.log(err.response.headers);
+    }
+    })
+    if(true){
+      source.cancel('Request cancelled!')
+    }
 }
 
 // INTERCEPTING REQUESTS & RESPONSES
